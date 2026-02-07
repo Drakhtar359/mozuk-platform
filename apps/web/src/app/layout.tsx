@@ -3,7 +3,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
     title: 'MOZUK Platform',
-    description: 'Client and Project Management',
+    description: 'Precision Protocol',
 };
 
 export default function RootLayout({
