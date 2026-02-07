@@ -1,13 +1,20 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { auth } from '@/lib/auth';
 
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const session = await auth();
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const { id } = await params;
         const client = await prisma.client.findUnique({
-            where: { id: params.id },
+            where: { id },
             include: {
                 projects: true,
             },
@@ -25,12 +32,18 @@ export async function GET(
 
 export async function PUT(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const session = await auth();
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const { id } = await params;
         const body = await request.json();
         const client = await prisma.client.update({
-            where: { id: params.id },
+            where: { id },
             data: {
                 name: body.name,
                 email: body.email,
@@ -48,11 +61,17 @@ export async function PUT(
 
 export async function DELETE(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const session = await auth();
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const { id } = await params;
         await prisma.client.delete({
-            where: { id: params.id },
+            where: { id },
         });
         return NextResponse.json({ message: 'Client deleted successfully' });
     } catch (error) {
