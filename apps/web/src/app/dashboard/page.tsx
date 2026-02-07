@@ -4,12 +4,6 @@ import { redirect } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
 import StatCard from '@/components/StatCard';
 
-import { Prisma } from '@prisma/client';
-
-type ClientWithProjects = Prisma.ClientGetPayload<{
-    include: { projects: true };
-}>;
-
 export default async function DashboardPage() {
     const session = await auth();
 
@@ -89,7 +83,7 @@ export default async function DashboardPage() {
                         </p>
                     ) : (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                            {recentClients.map((client: ClientWithProjects) => (
+                            {recentClients.map((client: any) => (
                                 <div
                                     key={client.id}
                                     style={{
