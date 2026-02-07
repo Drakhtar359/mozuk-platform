@@ -35,7 +35,7 @@ export default async function DashboardPage() {
             <div>
                 <div style={{ marginBottom: '32px' }}>
                     <h1 style={{ fontSize: '2rem', fontWeight: 600, marginBottom: '8px' }}>
-                        Welcome back, {session.user?.name || 'User'}
+                        Welcome to MOZUK Platform, {session.user?.name || 'User'}
                     </h1>
                     <p style={{ color: 'var(--text-secondary)' }}>
                         Here's what's happening with your business
