@@ -28,6 +28,21 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
 
                 if (parsedCredentials.success) {
                     const { email, password } = parsedCredentials.data;
+
+                    // DEMO MODE: Allow hardcoded admin access for deployment without DB
+                    if (email === 'admin@mozuk.net') {
+                        // password123 hash comparison
+                        const isMatch = await bcrypt.compare(password, '$2b$10$g4OstbFd4VezdaeGOBM9c..JoF3YIjPYRNJyffkbAaH7vIobrUv7C');
+                        if (isMatch) {
+                            return {
+                                id: 'demo-admin',
+                                name: 'Admin User',
+                                email: 'admin@mozuk.net',
+                                role: 'admin'
+                            };
+                        }
+                    }
+
                     const user = await getUser(email);
                     if (!user) return null;
                     const passwordsMatch = await bcrypt.compare(password, user.password);
