@@ -1,32 +1,67 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import LoginForm from '@/components/LoginForm';
+
 export default function Home() {
+  const [user, setUser] = useState<{ email: string; name: string } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const checkSession = async () => {
+    try {
+      const response = await fetch('/api/session');
+      const data = await response.json();
+
+      if (data.authenticated) {
+        setUser(data.user);
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
+      console.error('Session check error:', error);
+      setUser(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkSession();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/logout', { method: 'POST' });
+      setUser(null);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <main className="flex-1 flex justify-center items-center pt-[65px]">
+        <div className="text-white">Loading...</div>
+      </main>
+    );
+  }
+
   return (
     <main className="flex-1 flex justify-center items-center pt-[65px]">
-      <div className="bg-[rgba(20,20,20,0.6)] border border-[rgba(255,255,255,0.08)] rounded-2xl p-12 w-full max-w-[400px] text-center backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-        <h2 className="mt-0 mb-8 tracking-tighter text-2xl font-bold">Platform Access</h2>
-        <form>
-          <input
-            type="email"
-            name="email"
-            className="w-full p-3 mb-4 bg-[rgba(0,0,0,0.3)] border border-[rgba(255,255,255,0.1)] rounded-md text-white text-[0.95rem] box-border focus:outline-none focus:border-[var(--brand-color)]"
-            placeholder="Identity"
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            className="w-full p-3 mb-4 bg-[rgba(0,0,0,0.3)] border border-[rgba(255,255,255,0.1)] rounded-md text-white text-[0.95rem] box-border focus:outline-none focus:border-[var(--brand-color)]"
-            placeholder="Passkey"
-            required
-            minLength={6}
-          />
+      {user ? (
+        <div className="bg-[rgba(20,20,20,0.6)] border border-[rgba(255,255,255,0.08)] rounded-2xl p-12 w-full max-w-[600px] text-center backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+          <h2 className="text-2xl font-bold mb-4">Welcome, {user.name}</h2>
+          <p className="mb-6 text-gray-400">You have successfully authenticated.</p>
           <button
-            type="submit"
-            className="w-full p-3 bg-[var(--brand-color)] text-black font-semibold border-none rounded-md cursor-pointer text-[0.95rem] transition-opacity duration-200 hover:opacity-90 disabled:opacity-50"
+            onClick={handleLogout}
+            className="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
           >
-            Initialize Protocol
+            Sign Out
           </button>
-        </form>
-      </div>
+        </div>
+      ) : (
+        <LoginForm onLoginSuccess={checkSession} />
+      )}
     </main>
   );
 }
