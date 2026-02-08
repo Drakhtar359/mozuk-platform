@@ -8,8 +8,11 @@ export async function authenticate(
     formData: FormData,
 ) {
     try {
+        console.log('Server Action: authenticate called');
+        console.log('FormData:', Object.fromEntries(formData)); // Be careful in prod with passwords, but okay for debug
         await signIn('credentials', formData);
     } catch (error) {
+        console.error('Server Action Error:', error);
         if (error instanceof AuthError) {
             switch (error.type) {
                 case 'CredentialsSignin':
