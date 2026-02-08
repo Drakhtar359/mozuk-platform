@@ -13,8 +13,11 @@ export default function LoginForm() {
     return (
         <div className="bg-[rgba(20,20,20,0.6)] border border-[rgba(255,255,255,0.08)] rounded-2xl p-12 w-full max-w-[400px] text-center backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
             <h2 className="mt-0 mb-8 tracking-tighter text-2xl font-bold">Platform Access</h2>
-            <form action={(formData) => {
-                console.log('Client: Form submitted');
+            <form onSubmit={async (e) => {
+                e.preventDefault();
+                alert('Debug: Submit button clicked. Attempting login...');
+                console.log('Client: Submit handler triggered');
+                const formData = new FormData(e.currentTarget);
                 formAction(formData);
             }}>
                 <input
